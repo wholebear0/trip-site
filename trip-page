@@ -6,7 +6,8 @@
 <title>Trip Gallery</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; }
-#gallery img { width: 100%; margin-bottom: 10px; border-radius: 6px; }
+#gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+#gallery img { width: 100%; max-width: 300px; border-radius: 6px; }
 </style>
 </head>
 <body>
@@ -14,10 +15,9 @@ body { font-family: Arial, sans-serif; margin: 20px; }
 <div id="gallery">Loading...</div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec"; // Replace
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec"; // replace
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
-
 const gallery = document.getElementById("gallery");
 const titleElem = document.getElementById("trip-title");
 
@@ -25,12 +25,13 @@ fetch(APPS_SCRIPT_URL)
   .then(res => res.json())
   .then(data => {
     const urls = data.images[slug];
-    titleElem.textContent = slug.replace(/-/g, " "); // display trip name
-
     if (!urls || urls.length === 0) {
       gallery.innerHTML = "No photos for this trip.";
+      titleElem.textContent = slug.replace(/-/g, " ");
       return;
     }
+
+    titleElem.textContent = slug.replace(/-/g, " ");
 
     gallery.innerHTML = "";
     urls.forEach(url => {
