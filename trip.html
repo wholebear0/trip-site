@@ -37,33 +37,47 @@
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const slug = params.get("slug");
+const slug = params.get("slug"); // e.g., "romero-canyon"
 
-// Set title
+// Title
 document.getElementById("title").textContent = slug.replaceAll("-", " ");
 
-// Cloudinary folder path
-const folder = `hikes/${slug}`;
+// Cloudinary tag URL
+const cloudName = "YOUR_CLOUD_NAME";
+const tag = slug; // we use the same slug as tag
+const gallery = document.getElementById("gallery");
+gallery.innerHTML = "Loading...";
 
-// Load images dynamically
-fetch(`https://res.cloudinary.com/dudbxqaxs/image/list/${folder}.json`)
-  .then(res => res.json())
+fetch(`https://res.cloudinary.com/${cloudName}/image/list/${tag}.json`)
+  .then(res => {
+    if (!res.ok) throw new Error("Network response not OK");
+    return res.json();
+  })
   .then(data => {
-    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    if (!data.resources || data.resources.length === 0) {
+      gallery.innerHTML = "No photos found for this trip.";
+      return;
+    }
 
     data.resources.forEach(img => {
       const image = document.createElement("img");
       image.src = img.secure_url;
+      image.style.width = "100%";
+      image.style.marginBottom = "10px";
       gallery.appendChild(image);
     });
   })
-  .catch(err => console.error("Gallery load failed", err));
-
+  .catch(err => {
+    console.error("Cloudinary fetch failed:", err);
+    gallery.innerHTML = "Failed to load photos.";
   });
+
 </script>
 
 
 </body>
 </html>
+
 
 
