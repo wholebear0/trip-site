@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Gallery</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1 { text-align: center; margin-bottom: 20px; }
+#gallery { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+#gallery img { width: 100%; max-width: 300px; border-radius: 6px; object-fit: cover; }
+#back-btn { display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px; border-radius: 6px; border: none; background: #444; color: #fff; cursor: pointer; }
+#back-btn:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<h1 id="trip-title">Loading...</h1>
+<div id="gallery">Loading...</div>
+<button id="back-btn" onclick="history.back()">← Back to Map</button>
+
+<script>
+// Replace this with your deployed Apps Script Web App URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec";
+
+const params = new URLSearchParams(window.location.search);
+const slug = params.get("slug"); // gets the trip slug from URL
+const gallery = document.getElementById("gallery");
+const titleElem = document.getElementById("trip-title");
+
+fetch(APPS_SCRIPT_URL)
+  .then(res => res.json())
+  .then(data => {
+    // Google Sheet must provide a dictionary of images keyed by slug
+    const urls = data.images[slug];
+    titleElem.textContent = slug.replace(/-/g, " "); // convert slug to readable title
+
+    if (!urls || urls.length === 0) {
+      gallery.innerHTML = "No photos for this trip.";
+      return;
+    }
+
+    gallery.innerHTML = "";
+    urls.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      gallery.appendChild(img);
+    });
+  })
+  .catch(err => {
+    console.error("Failed to load gallery:", err);
+    gallery.innerHTML = "Failed to load photos.";
+  });
+</script>
+
+</body>
+</html>
