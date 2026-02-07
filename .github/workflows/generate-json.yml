@@ -61,10 +61,8 @@ jobs:
           })();
           EOF
 
-      - name: Commit JSON files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add data/*.json
-          git diff --cached --quiet || git commit -m "Auto-generate trip JSON files [skip ci]"
-          git push
+      - name: Upload JSON files as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: trip-json
+          path: data/*.json
