@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Gallery</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+#gallery img { width: 100%; margin-bottom: 10px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<h1 id="trip-title">Loading...</h1>
+<div id="gallery">Loading...</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec"; // Replace
+const params = new URLSearchParams(window.location.search);
+const slug = params.get("slug");
+
+const gallery = document.getElementById("gallery");
+const titleElem = document.getElementById("trip-title");
+
+fetch(APPS_SCRIPT_URL)
+  .then(res => res.json())
+  .then(data => {
+    const urls = data.images[slug];
+    titleElem.textContent = slug.replace(/-/g, " "); // display trip name
+
+    if (!urls || urls.length === 0) {
+      gallery.innerHTML = "No photos for this trip.";
+      return;
+    }
+
+    gallery.innerHTML = "";
+    urls.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      gallery.appendChild(img);
+    });
+  })
+  .catch(err => {
+    console.error("Failed to load gallery:", err);
+    gallery.innerHTML = "Failed to load photos.";
+  });
+</script>
+</body>
+</html>
