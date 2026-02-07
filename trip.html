@@ -39,13 +39,13 @@
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 
-// Set page title
+// Set title
 document.getElementById("title").textContent = slug.replaceAll("-", " ");
 
 // Cloudinary folder path
-const folder = `trips/${slug}`;
+const folder = `hikes/${slug}`;
 
-// Fetch images from Cloudinary
+// Load images dynamically
 fetch(`https://res.cloudinary.com/dudbxqaxs/image/list/${folder}.json`)
   .then(res => res.json())
   .then(data => {
@@ -57,12 +57,13 @@ fetch(`https://res.cloudinary.com/dudbxqaxs/image/list/${folder}.json`)
       gallery.appendChild(image);
     });
   })
-  .catch(err => {
-    console.error("Gallery load failed", err);
+  .catch(err => console.error("Gallery load failed", err));
+
   });
 </script>
 
 
 </body>
 </html>
+
 
