@@ -52,7 +52,8 @@ body { margin: 0; font-family: Arial, sans-serif; }
 <script src="https://maps.googleapis.com/maps/api/js?key=AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu"></script>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec"; // replace with your Apps Script URL
+// Replace this with your deployed Apps Script Web App URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykGnPgEoQ-VGN3x3hOwKLvu1yoClbebiN2_Tpi0pFbQwWHlDdMwLywlJPIarn6PpKu/exec";
 
 window.addEventListener("load", function() {
   const mapDiv = document.getElementById("map");
@@ -62,7 +63,6 @@ window.addEventListener("load", function() {
   const closePanelBtn = detailsPanel.querySelector(".close-panel");
 
   let allMarkersData = [];
-  let imagesData = {};
   let mapMarkers = [];
 
   const map = new google.maps.Map(mapDiv, {
@@ -82,12 +82,11 @@ window.addEventListener("load", function() {
     }
   }
 
-  // Fetch Apps Script data
+  // Load trip data from Apps Script
   fetch(APPS_SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
       allMarkersData = data.cardItems;
-      imagesData = data.images;
       updateMarkers();
     })
     .catch(err => console.error("Failed to load sheet data:", err));
@@ -113,10 +112,7 @@ window.addEventListener("load", function() {
           icon: getMarkerIcon(d.type)
         });
 
-        marker.addListener("click", () => {
-          showDetails(d);
-        });
-
+        marker.addListener("click", () => showDetails(d));
         mapMarkers.push(marker);
       }
     });
@@ -137,9 +133,9 @@ window.addEventListener("load", function() {
 
     const goToPageBtn = detailsPanel.querySelector(".go-to-page-btn");
     goToPageBtn.addEventListener("click", () => {
-      // Convert title to slug
       const slug = data.title.toLowerCase().replace(/\s+/g,'-');
-      window.location.href = `trip-page.html?slug=${slug}`; // opens gallery page
+      // Opens a separate gallery page
+      window.location.href = `trip-gallery.html?slug=${slug}`;
     });
   }
 
