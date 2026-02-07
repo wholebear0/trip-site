@@ -22,7 +22,7 @@ h1 {
     align-items: center;
 }
 #gallery img {
-    width: 90%; /* make images larger */
+    width: 90%; /* larger images */
     max-width: 800px;
     border-radius: 8px;
     object-fit: cover;
@@ -49,38 +49,36 @@ h1 {
 <button id="back-btn" onclick="history.back()">← Back to Map</button>
 
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxwMmz0fceVtuMSQLHV2b2FMwHP37RbOTk7jgd3rKS_LzdPziAF_Y50hbos3tjFfV39/exec"; // replace with your Apps Script URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj6sn4S0NlI692Di1xmCK346dqPNxYD8ke54wrbp-_qJ0GItroEf-5Jqho78u0Yznj/exec"; // Replace with your Apps Script URL
+
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 const gallery = document.getElementById("gallery");
 const titleElem = document.getElementById("trip-title");
 
 fetch(APPS_SCRIPT_URL)
-.then(res => res.json())
-.then(data => {
-    let urlsStr = data.images[slug] || "";
-    titleElem.textContent = slug.replace(/-/g,' ');
+  .then(res => res.json())
+  .then(data => {
+    const urls = data.images[slug] || [];
+    titleElem.textContent = slug.replace(/-/g, ' ');
 
-    if(!urlsStr) {
-        gallery.innerHTML = "<p>No photos for this trip.</p>";
-        return;
+    if(!urls.length){
+      gallery.innerHTML = "<p>No photos for this trip.</p>";
+      return;
     }
-
-    // Split concatenated URLs by https://
-    let urls = urlsStr.split("https://").filter(s => s.trim() !== "").map(s => "https://" + s);
 
     gallery.innerHTML = "";
     urls.forEach(url => {
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = slug;
-        gallery.appendChild(img);
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = slug;
+      gallery.appendChild(img);
     });
-})
-.catch(err => {
+  })
+  .catch(err => {
     console.error(err);
     gallery.innerHTML = "<p>Failed to load photos.</p>";
-});
+  });
 </script>
 
 </body>
