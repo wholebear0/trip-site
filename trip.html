@@ -39,20 +39,16 @@ body { margin: 0; font-family: Arial, sans-serif; }
 </div>
 
 <div id="container">
-  <div id="map-container">
-    <div id="map"></div>
-  </div>
+  <div id="map-container"><div id="map"></div></div>
   <div id="details-panel">
     <button class="close-panel">Close</button>
     <div id="details-content"></div>
   </div>
 </div>
 
-<!-- Google Maps API -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA"></script>
-
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwncwMl-vbwDnRcAZD3JbKHwHfjNYAxiRuugks7_3dEksoq8-pxly0jN89RklkdI6IV/exec"; // replace with your Apps Script URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxY27pM_XCbg-X3G3SOpJkCOBLAAlHgr0Kcuclud00TNABAJfx-Nr5JDVZsAW0py8vk/exec";
 
 window.addEventListener("load", function() {
   const mapDiv = document.getElementById("map");
@@ -81,13 +77,9 @@ window.addEventListener("load", function() {
     }
   }
 
-  // Load trip data from Apps Script
   fetch(APPS_SCRIPT_URL)
     .then(res => res.json())
-    .then(data => {
-      allMarkersData = data.cardItems;
-      updateMarkers();
-    })
+    .then(data => { allMarkersData = data.cardItems; updateMarkers(); })
     .catch(err => console.error("Failed to load sheet data:", err));
 
   function updateMarkers() {
@@ -95,7 +87,7 @@ window.addEventListener("load", function() {
     mapMarkers = [];
 
     const bounds = map.getBounds();
-    if (!bounds) return;
+    if(!bounds) return;
 
     const selectedType = typeFilter.value;
 
@@ -104,13 +96,12 @@ window.addEventListener("load", function() {
       if(!d.position) return;
 
       const position = new google.maps.LatLng(d.position.lat, d.position.lng);
-      if (bounds.contains(position)) {
+      if(bounds.contains(position)) {
         const marker = new google.maps.Marker({
           position,
           map,
           icon: getMarkerIcon(d.type)
         });
-
         marker.addListener("click", () => showDetails(d));
         mapMarkers.push(marker);
       }
@@ -133,15 +124,12 @@ window.addEventListener("load", function() {
     const goToPageBtn = detailsPanel.querySelector(".go-to-page-btn");
     goToPageBtn.addEventListener("click", () => {
       const slug = data.title.toLowerCase().replace(/\s+/g,'-');
-      // OPEN TRIP GALLERY PAGE (NO MAP)
+      // THIS MUST POINT TO THE SEPARATE GALLERY PAGE
       window.location.href = `trip-gallery.html?slug=${slug}`;
     });
   }
 
-  closePanelBtn.addEventListener("click", () => {
-    detailsPanel.style.display = "none";
-  });
-
+  closePanelBtn.addEventListener("click", () => { detailsPanel.style.display = "none"; });
   map.addListener("bounds_changed", updateMarkers);
   typeFilter.addEventListener("change", updateMarkers);
 });
