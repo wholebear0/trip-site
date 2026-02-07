@@ -66,5 +66,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add data/*.json
-          git commit -m "Auto-generate trip JSON files [skip ci]" || echo "No changes"
+          git diff --cached --quiet || git commit -m "Auto-generate trip JSON files [skip ci]"
           git push
