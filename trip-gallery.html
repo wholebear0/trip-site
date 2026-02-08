@@ -5,20 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trip Gallery</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-}
-header {
-  text-align: center;
-  padding: 30px 20px 20px 20px;
-}
-header h1 {
-  margin: 0;
-  font-size: 36px;
-  color: #333;
-}
+body { margin: 0; font-family: Arial, sans-serif; background: #f2f2f2; }
+header { text-align: center; padding: 30px 20px 20px 20px; }
+header h1 { margin: 0; font-size: 36px; color: #333; }
 
 .trip-container {
   display: flex;
@@ -37,28 +26,13 @@ header h1 {
   border-radius: 6px;
 }
 
-.trip-info {
-  flex: 1 1 200px;
-  min-width: 200px;
-}
+.trip-info { flex: 1 1 200px; min-width: 200px; }
 .trip-info p { margin: 5px 0; }
 
-.trip-cover {
-  flex: 1 1 400px;
-  text-align: center;
-}
-.trip-cover img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 0;
-}
+.trip-cover { flex: 1 1 400px; text-align: center; }
+.trip-cover img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 0; }
 
-.trip-map {
-  flex: 1 1 300px;
-  min-width: 300px;
-  height: 300px;
-}
+.trip-map { flex: 1 1 300px; min-width: 300px; height: 300px; }
 
 .banner {
   margin: 20px auto;
@@ -85,12 +59,8 @@ header h1 {
 }
 
 @media (max-width: 900px) {
-  .trip-container {
-    flex-direction: column;
-  }
-  .trip-map, .trip-cover, .trip-info {
-    min-width: 100%;
-  }
+  .trip-container { flex-direction: column; }
+  .trip-map, .trip-cover, .trip-info { min-width: 100%; }
 }
 </style>
 </head>
@@ -106,20 +76,28 @@ header h1 {
   <div class="trip-map" id="trip-map"></div>
 </div>
 
-<div class="banner">
-  Your small banner text goes here
-</div>
+<div class="banner">Your small banner text goes here</div>
 
 <div class="photos-container" id="photos-container"></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoUNNQZsKfLkEYcc4DfyVQkzuc3BGGXd-DDV0dAfMHhhE5i_FY3Bq5z8PBUhg2teot/exec";
 const params = new URLSearchParams(window.location.search);
 const slug = params.get('slug');
 
-// Wait for Google Maps to load
+let CONFIG = { GOOGLE_MAPS_KEY: "", APPS_SCRIPT_URL: "" };
+
+// Step 1: Load config.json
+fetch('config.json')
+  .then(res => res.json())
+  .then(config => {
+    CONFIG = config;
+    loadGoogleMaps();
+  })
+  .catch(err => console.error("Failed to load config.json", err));
+
+// Step 2: Initialize after Google Maps API loads
 function initTripGallery() {
-  fetch(SCRIPT_URL)
+  fetch(CONFIG.APPS_SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
       const trip = data.cardItems.find(t => t.title.toLowerCase().replace(/\s+/g,'-') === slug);
@@ -139,11 +117,13 @@ function initTripGallery() {
         <p><strong>Type:</strong> ${trip.type}</p>
       `;
 
-      // Cover photo
-      const firstPhoto = trip.imageUrl.split(",")[0].trim();
-      document.getElementById("trip-cover").innerHTML = `<img src="${firstPhoto}" alt="${trip.title}" loading="lazy">`;
+      // Cover photo (first image)
+      const firstPhoto = trip.Imagefolder ? trip.Imagefolder.split(",")[0].trim() : "";
+      if(firstPhoto) {
+        document.getElementById("trip-cover").innerHTML = `<img src="${firstPhoto}" alt="${trip.title}" loading="lazy">`;
+      }
 
-      // Map
+      // Small map
       const mapDiv = document.getElementById("trip-map");
       const map = new google.maps.Map(mapDiv, {
         center: { lat: trip.position.lat, lng: trip.position.lng },
@@ -157,10 +137,12 @@ function initTripGallery() {
         map: map
       });
 
-      // All photos
-      const urls = trip.imageUrl.split(",");
-      document.getElementById("photos-container").innerHTML =
-        urls.map(u => `<img src="${u.trim()}" alt="${trip.title}" loading="lazy">`).join("");
+      // All photos below banner
+      if(trip.Imagefolder){
+        const urls = trip.Imagefolder.split(",").map(u => u.trim()).filter(u => u.length>0);
+        document.getElementById("photos-container").innerHTML =
+          urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("");
+      }
     })
     .catch(err => {
       console.error(err);
@@ -168,16 +150,13 @@ function initTripGallery() {
     });
 }
 
-// Dynamically load Google Maps script and call initTripGallery after load
-function loadGoogleMaps() {
+// Step 3: Dynamically load Google Maps API
+function loadGoogleMaps(){
   const script = document.createElement('script');
-  script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initTripGallery`;
   script.defer = true;
   document.head.appendChild(script);
 }
-
-// Start
-loadGoogleMaps();
 </script>
 
 </body>
