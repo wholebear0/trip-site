@@ -20,12 +20,12 @@ body { margin:0; font-family: Arial,sans-serif; background:#f2f2f2; }
 }
 
 #container {
-  display:flex; flex-wrap: wrap;
+  display: flex;
 }
 
 #map-container {
   flex: 0 0 70%;
-  padding:10px;
+  padding: 10px;
 }
 
 #map {
@@ -35,12 +35,10 @@ body { margin:0; font-family: Arial,sans-serif; background:#f2f2f2; }
 }
 
 #details-panel {
-  flex: 1;
-  background:#f9f9f9;
-  padding:15px;
-  overflow-y:auto;
-  border-left:1px solid #ccc;
+  flex: 1 0 30%; /* sidebar width */
   max-height: 80vh;
+  overflow-y: auto;
+  border-left: 1px solid #ccc;
 }
 
 #details-panel img {
@@ -121,12 +119,14 @@ function initMap(scriptUrl){
   const typeFilter = document.getElementById("typeFilter");
   const detailsContent = document.getElementById("details-content");
 
-  const map = new google.maps.Map(mapDiv,{
-    center:{lat:36.805098,lng:-109.822512},
-    zoom:6,
-    mapTypeId: google.maps.MapTypeId.TERRAIN,
-    disableDefaultUI:true
-  });
+const map = new google.maps.Map(mapDiv, {
+  center: {lat: 36.805098, lng: -109.822512},
+  zoom: 6,
+  mapTypeId: google.maps.MapTypeId.TERRAIN,
+  disableDefaultUI: true,
+  gestureHandling: "greedy" // <-- allows scroll zoom without Ctrl
+});
+
 
   function getMarkerIcon(type){
     switch(type.toLowerCase()){
