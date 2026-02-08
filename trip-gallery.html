@@ -125,12 +125,13 @@ function initTripGallery() {
                 map: map
             });
 
-            // **All images from Imagefolder column BELOW banner**
-            if(trip.Imagefolder){
-                const urls = trip.Imagefolder.split(","); // assuming comma-separated
-                document.getElementById("photos-container").innerHTML =
-                    urls.map(u => `<img src="${u.trim()}" alt="${trip.title}" loading="lazy">`).join("");
-            }
+      // All photos from Imagefolder column
+if(trip.Imagefolder){
+    const urls = trip.Imagefolder.split(", "); // split on comma + space
+    document.getElementById("photos-container").innerHTML =
+        urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("");
+}
+
         })
         .catch(err => {
             console.error(err);
