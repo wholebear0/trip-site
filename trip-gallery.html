@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trip Gallery</title>
+
 <style>
 body {
   margin: 0;
@@ -21,7 +22,7 @@ header h1 {
   color: #333;
 }
 
-/* Top three components container */
+/* Top three components */
 .trip-container {
   display: flex;
   flex-wrap: wrap;
@@ -32,7 +33,9 @@ header h1 {
   gap: 20px;
 }
 
-.trip-info, .trip-cover, .trip-map {
+.trip-info,
+.trip-cover,
+.trip-map {
   background: #fff;
   padding: 15px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -47,25 +50,26 @@ header h1 {
   width: 100%;
   max-height: 300px;
   object-fit: cover;
-  border-radius: 0;
   display: block;
   margin: 0 auto;
 }
 
 .trip-map { flex: 1 1 300px; min-width: 300px; height: 300px; }
 
+/* WRITEUP */
 .writeup {
   max-width: 1200px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 24px 28px;
   background: #fff;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  line-height: 1.6;
+  line-height: 1.7;
   font-size: 16px;
   color: #333;
 }
 
+/* Banner */
 .banner {
   margin: 20px auto;
   max-width: 1200px;
@@ -76,34 +80,32 @@ header h1 {
   font-size: 18px;
 }
 
+/* Photos */
 .photos-container {
   margin: 20px auto;
   max-width: 1200px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* center photos */
+  align-items: center;
   gap: 20px;
 }
 
 .photos-container img {
   width: 90%;
   max-width: 800px;
-  border-radius: 0;
   object-fit: cover;
   display: block;
-  loading: lazy;
 }
 
+/* Mobile */
 @media (max-width: 900px) {
   .trip-container {
     flex-direction: column;
   }
-  .trip-map, .trip-cover, .trip-info {
-    min-width: 100%;
-  }
 }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -116,7 +118,7 @@ header h1 {
   <div class="trip-map" id="trip-map"></div>
 </div>
 
-<!-- WriteUp section -->
+<!-- WRITEUP (ABOVE BANNER) -->
 <div class="writeup" id="trip-writeup"></div>
 
 <div class="banner">
@@ -127,67 +129,88 @@ header h1 {
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxO4sTkkSyeBZmPpFS_bKP783FM-8qPTgCDjqvj5Jy3RBCwjJ_irLmjRT68uA4peryH/exec";
+
 const params = new URLSearchParams(window.location.search);
-const slug = params.get('slug');
+const slug = params.get("slug");
 
-function initTripGallery() {
-  fetch(SCRIPT_URL)
-    .then(res => res.json())
-    .then(data => {
-      const trip = data.cardItems.find(t => t.title.toLowerCase().replace(/\s+/g,'-') === slug);
-      if(!trip){
-        document.getElementById("trip-title").innerText = "Trip not found";
-        return;
-      }
-
-      document.getElementById("trip-title").innerText = trip.title;
-
-      // Left info column
-      document.getElementById("trip-info").innerHTML = `
-        <p><strong>Date:</strong> ${trip.date}</p>
-        <p><strong>Area:</strong> ${trip.area}</p>
-        <p><strong>Miles:</strong> ${trip.miles}</p>
-        <p><strong>Elevation Gain:</strong> ${trip.elevationGain}</p>
-        <p><strong>Type:</strong> ${trip.type}</p>
-      `;
-
-      // Cover photo middle column (from imageUrl column)
-      document.getElementById("trip-cover").innerHTML = `<img src="${trip.imageUrl}" alt="${trip.title}" loading="lazy">`;
-
-      // Small map right column
-      const mapDiv = document.getElementById("trip-map");
-      const map = new google.maps.Map(mapDiv, {
-        center: { lat: trip.position.lat, lng: trip.position.lng },
-        zoom: 10,
-        mapTypeId: google.maps.MapTypeId.TERRAIN,
-        disableDefaultUI: true,
-        gestureHandling: "greedy"
-      });
-      new google.maps.Marker({
-        position: { lat: trip.position.lat, lng: trip.position.lng },
-        map: map
-      });
-
-      // WriteUp section
-      document.getElementById("trip-writeup").innerText = trip.WriteUp || "";
-
-      // All photos below banner (from Imagefolder column)
-      const urls = data.images[slug] || [];
-      document.getElementById("photos-container").innerHTML =
-        urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("");
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("trip-title").innerText = "Failed to load trip data";
-    });
+/* Convert title → slug */
+function makeSlug(text){
+  return text.toLowerCase().replace(/\s+/g,"-");
 }
 
-// Dynamically load Google Maps script
-function loadGoogleMaps() {
-  const script = document.createElement('script');
-  script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
-  script.defer = true;
-  document.head.appendChild(script);
+function initTripGallery(){
+
+  fetch(SCRIPT_URL)
+  .then(res => res.json())
+  .then(data => {
+
+    const trip = data.cardItems.find(t => makeSlug(t.title) === slug);
+
+    if(!trip){
+      document.getElementById("trip-title").innerText = "Trip not found";
+      return;
+    }
+
+    /* TITLE */
+    document.getElementById("trip-title").innerText = trip.title;
+
+    /* INFO */
+    document.getElementById("trip-info").innerHTML = `
+      <p><strong>Date:</strong> ${trip.date || ""}</p>
+      <p><strong>Area:</strong> ${trip.area || ""}</p>
+      <p><strong>Miles:</strong> ${trip.miles || ""}</p>
+      <p><strong>Elevation Gain:</strong> ${trip.elevationGain || ""}</p>
+      <p><strong>Type:</strong> ${trip.type || ""}</p>
+    `;
+
+    /* COVER PHOTO (IMAGEURL COLUMN) */
+    document.getElementById("trip-cover").innerHTML =
+      `<img src="${trip.imageUrl || ""}" alt="${trip.title}" loading="lazy">`;
+
+    /* MAP */
+    const map = new google.maps.Map(
+      document.getElementById("trip-map"),
+      {
+        center: trip.position,
+        zoom: 10,
+        mapTypeId: "terrain",
+        disableDefaultUI: true
+      }
+    );
+
+    new google.maps.Marker({
+      position: trip.position,
+      map: map
+    });
+
+    /* WRITEUP — FIXED */
+    const writeupText = trip.WriteUp || "";
+    document.getElementById("trip-writeup").innerHTML =
+      writeupText.replace(/\n/g,"<br>");
+
+    /* PHOTOS BELOW BANNER */
+    const urls = data.images[slug] || [];
+
+    document.getElementById("photos-container").innerHTML =
+      urls.map(u =>
+        `<img src="${u}" alt="${trip.title}" loading="lazy">`
+      ).join("");
+
+  })
+  .catch(err=>{
+    console.error(err);
+    document.getElementById("trip-title").innerText =
+      "Failed to load trip data";
+  });
+}
+
+/* Load Google Maps */
+function loadGoogleMaps(){
+  const s = document.createElement("script");
+  s.src =
+    "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
+  s.defer = true;
+  document.head.appendChild(s);
 }
 
 loadGoogleMaps();
