@@ -117,14 +117,31 @@ function initTripGallery() {
         <p><strong>Type:</strong> ${trip.type}</p>
       `;
 
-      // All images from Imagefolder
-      const imgUrls = data.images[slug] || [];
-      if(imgUrls.length > 0){
-        // First photo for cover
-        document.getElementById("trip-cover").innerHTML = `<img src="${imgUrls[0]}" alt="${trip.title}" loading="lazy">`;
+      // Top-center cover photo (from imageUrl column)
+      if(trip.imageUrl){
+        document.getElementById("trip-cover").innerHTML = `<img src="${trip.imageUrl}" alt="${trip.title}" loading="lazy">`;
+      } else {
+        document.getElementById("trip-cover").innerHTML = '';
+      }
 
-        // Progressive lazy load for all photos below banner
-        const photosContainer = document.getElementById("photos-container");
+      // Map
+      if(trip.position){
+        const mapDiv = document.getElementById("trip-map");
+        const map = new google.maps.Map(mapDiv,{
+          center: { lat: trip.position.lat, lng: trip.position.lng },
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          disableDefaultUI: true,
+          gestureHandling: "greedy"
+        });
+        new google.maps.Marker({ position: { lat: trip.position.lat, lng: trip.position.lng }, map: map });
+      }
+
+      // All photos below banner (from Imagefolder)
+      const imgUrls = data.images[slug] || [];
+      const photosContainer = document.getElementById("photos-container");
+
+      if(imgUrls.length > 0){
         imgUrls.forEach(url => {
           const img = document.createElement('img');
           img.dataset.src = url;
@@ -145,24 +162,10 @@ function initTripGallery() {
         }, { rootMargin: '0px 0px 100px 0px' });
 
         document.querySelectorAll('.photos-container img').forEach(img => observer.observe(img));
-
       } else {
-        document.getElementById("trip-cover").innerHTML = '';
-        document.getElementById("photos-container").innerHTML = '<p>No photos available.</p>';
+        photosContainer.innerHTML = '<p>No photos available.</p>';
       }
 
-      // Map
-      if(trip.position){
-        const mapDiv = document.getElementById("trip-map");
-        const map = new google.maps.Map(mapDiv,{
-          center: { lat: trip.position.lat, lng: trip.position.lng },
-          zoom: 10,
-          mapTypeId: google.maps.MapTypeId.TERRAIN,
-          disableDefaultUI: true,
-          gestureHandling: "greedy"
-        });
-        new google.maps.Marker({ position: { lat: trip.position.lat, lng: trip.position.lng }, map: map });
-      }
     })
     .catch(err => {
       console.error(err);
