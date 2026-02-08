@@ -128,91 +128,88 @@ header h1 {
 <div class="photos-container" id="photos-container"></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWXCQcQTviSsQJlCGRkoR00s2AMhhP9tSgHJ_Qwsjr1nYi8j9Y75h9pCE-Q076GuBm/exec";
+// ---------------------- CONFIG ----------------------
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl0U7PeOyimLk9mx_aU2nKXlxkNif7zF9tGes7-wMy_tOlwoswvUQ17NwaQYFUAlM7/exec"; // <-- Put your Apps Script URL here
 
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 
-/* Convert title → slug */
+// Helper: convert title → slug
 function makeSlug(text){
   return text.toLowerCase().replace(/\s+/g,"-");
 }
 
-function initTripGallery(){
-
+// ---------------------- INIT ----------------------
+function initTripGallery() {
   fetch(SCRIPT_URL)
-  .then(res => res.json())
-  .then(data => {
-
-    const trip = data.cardItems.find(t => makeSlug(t.title) === slug);
-
-    if(!trip){
-      document.getElementById("trip-title").innerText = "Trip not found";
-      return;
-    }
-
-    /* TITLE */
-    document.getElementById("trip-title").innerText = trip.title;
-
-    /* INFO */
-    document.getElementById("trip-info").innerHTML = `
-      <p><strong>Date:</strong> ${trip.date || ""}</p>
-      <p><strong>Area:</strong> ${trip.area || ""}</p>
-      <p><strong>Miles:</strong> ${trip.miles || ""}</p>
-      <p><strong>Elevation Gain:</strong> ${trip.elevationGain || ""}</p>
-      <p><strong>Type:</strong> ${trip.type || ""}</p>
-    `;
-
-    /* COVER PHOTO (IMAGEURL COLUMN) */
-    document.getElementById("trip-cover").innerHTML =
-      `<img src="${trip.imageUrl || ""}" alt="${trip.title}" loading="lazy">`;
-
-    /* MAP */
-    const map = new google.maps.Map(
-      document.getElementById("trip-map"),
-      {
-        center: trip.position,
-        zoom: 10,
-        mapTypeId: "terrain",
-        disableDefaultUI: true
+    .then(res => res.json())
+    .then(data => {
+      // ------------------- FIND TRIP DATA -------------------
+      const trip = data.cardItems.find(t => makeSlug(t.title) === slug);
+      if(!trip){
+        document.getElementById("trip-title").innerText = "Trip not found";
+        return;
       }
-    );
 
-    new google.maps.Marker({
-      position: trip.position,
-      map: map
+      // ------------------- TITLE -------------------
+      document.getElementById("trip-title").innerText = trip.title;
+
+      // ------------------- INFO -------------------
+      document.getElementById("trip-info").innerHTML = `
+        <p><strong>Date:</strong> ${trip.date || ""}</p>
+        <p><strong>Area:</strong> ${trip.area || ""}</p>
+        <p><strong>Miles:</strong> ${trip.miles || ""}</p>
+        <p><strong>Elevation Gain:</strong> ${trip.elevationGain || ""}</p>
+        <p><strong>Type:</strong> ${trip.type || ""}</p>
+      `;
+
+      // ------------------- COVER PHOTO -------------------
+      document.getElementById("trip-cover").innerHTML =
+        `<img src="${trip.imageUrl || ""}" alt="${trip.title}" loading="lazy">`;
+
+      // ------------------- GOOGLE MAP -------------------
+      const map = new google.maps.Map(
+        document.getElementById("trip-map"),
+        {
+          center: trip.position || {lat: trip.lat, lng: trip.lng},
+          zoom: 10,
+          mapTypeId: "terrain",
+          disableDefaultUI: true
+        }
+      );
+
+      new google.maps.Marker({
+        position: trip.position || {lat: trip.lat, lng: trip.lng},
+        map: map
+      });
+
+      // ------------------- WRITEUP -------------------
+      const writeupText = trip.WriteUp || "";
+      document.getElementById("trip-writeup").innerHTML =
+        writeupText.replace(/\n/g,"<br>");
+
+      // ------------------- PHOTOS -------------------
+      const urls = data.images[slug] || [];
+      document.getElementById("photos-container").innerHTML =
+        urls.length > 0
+          ? urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("")
+          : "No photos found for this trip.";
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("trip-title").innerText = "Failed to load trip data";
     });
-
-    /* WRITEUP — FIXED */
-    const writeupText = trip.WriteUp || "";
-    document.getElementById("trip-writeup").innerHTML =
-      writeupText.replace(/\n/g,"<br>");
-
-    /* PHOTOS BELOW BANNER */
-    const urls = data.images[slug] || [];
-
-    document.getElementById("photos-container").innerHTML =
-      urls.map(u =>
-        `<img src="${u}" alt="${trip.title}" loading="lazy">`
-      ).join("");
-
-  })
-  .catch(err=>{
-    console.error(err);
-    document.getElementById("trip-title").innerText =
-      "Failed to load trip data";
-  });
 }
 
-/* Load Google Maps */
-function loadGoogleMaps(){
+// ---------------------- LOAD GOOGLE MAPS ----------------------
+function loadGoogleMaps() {
   const s = document.createElement("script");
-  s.src =
-    "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
+  s.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery`;
   s.defer = true;
   document.head.appendChild(s);
 }
 
+// Start
 loadGoogleMaps();
 </script>
 
