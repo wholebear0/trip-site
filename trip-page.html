@@ -1,48 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trip Gallery</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; }
-#gallery { display: flex; flex-wrap: wrap; gap: 10px; }
-#gallery img { width: 100%; max-width: 300px; border-radius: 6px; }
-</style>
+  <meta charset="UTF-8">
+  <title>Hike Trip Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { margin-bottom: 10px; }
+    .trip-writeup { margin-bottom: 20px; }
+    .photo-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .photo-gallery img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    @media (max-width: 600px) {
+      .photo-gallery img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1 id="trip-title">Loading...</h1>
-<div id="gallery">Loading...</div>
 
-<script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnOvZA1qTMO2sAZyXGJXJD8DsFsE5FhPTsIWJbrb9npOQeUMtafEvpWm2_3x2AJBCL/exec"; // replace
-const params = new URLSearchParams(window.location.search);
-const slug = params.get("slug");
-const gallery = document.getElementById("gallery");
-const titleElem = document.getElementById("trip-title");
+  <div id="trip-container"></div>
 
-fetch(APPS_SCRIPT_URL)
-  .then(res => res.json())
-  .then(data => {
-    const urls = data.images[slug];
-    titleElem.textContent = slug.replace(/-/g, " ");
+  <script>
+    // Fetch JSON from your Apps Script web app
+    fetch('https://script.google.com/macros/s/AKfycbzhdf7UdyQRUz1iEspQYAMvQmdz4ZIakX01z14uJhXyPNySFLIS3smsZf-EqWtzD4be/exec')
+      .then(res => res.json())
+      .then(data => {
+        const tripContainer = document.getElementById('trip-container');
 
-    if (!urls || urls.length === 0) {
-      gallery.innerHTML = "No photos for this trip.";
-      return;
-    }
+        // Example: display the first trip (change this if you want dynamic selection)
+        const trip = data.cardItems[0];
 
-    gallery.innerHTML = "";
-    urls.forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      gallery.appendChild(img);
-    });
-  })
-  .catch(err => {
-    console.error("Failed to load gallery:", err);
-    gallery.innerHTML = "Failed to load photos.";
-  });
-</script>
+        if (!trip) {
+          tripContainer.innerHTML = '<p>No trip found.</p>';
+          return;
+        }
+
+        // Create HTML
+        const html = `
+          <h1>${trip.title}</h1>
+          <p class="trip-writeup">${trip.WriteUp}</p>
+          <div class="photo-gallery">
+            ${trip.images.map(url => `<img src="${url}" alt="${trip.title} photo" />`).join('')}
+          </div>
+        `;
+
+        tripContainer.innerHTML = html;
+      })
+      .catch(err => {
+        console.error('Error fetching trip data:', err);
+        document.getElementById('trip-container').innerHTML = '<p>Error loading trip data.</p>';
+      });
+  </script>
+
 </body>
 </html>
