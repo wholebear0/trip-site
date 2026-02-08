@@ -209,6 +209,28 @@ function loadGoogleMaps() {
   document.head.appendChild(s);
 }
 
+// ---------------------- FIX GOOGLE DRIVE IMAGE LINKS ----------------------
+// Function to convert Google Drive links to the correct format
+function fixGoogleDriveLinks() {
+  const images = document.querySelectorAll('img');
+  
+  images.forEach(image => {
+    const currentSrc = image.src;
+
+    // Check if the link is from Google Drive and in the old format
+    if (currentSrc.includes("drive.google.com/file/d/") && currentSrc.includes("/view?usp=drive_link")) {
+      const fileId = currentSrc.match(/\/d\/(.*)\/view/)[1];
+      const newSrc = `https://drive.google.com/uc?id=${fileId}`;
+      
+      // Update the image source
+      image.src = newSrc;
+    }
+  });
+}
+
+// Call the fix after all images are loaded
+window.addEventListener('load', fixGoogleDriveLinks);
+
 // Start
 loadGoogleMaps();
 </script>
