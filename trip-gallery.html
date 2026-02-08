@@ -1,109 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trip Gallery</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Gallery</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+}
 
-    header {
-      text-align: center;
-      padding: 30px 20px 20px 20px;
-    }
+header {
+  text-align: center;
+  padding: 30px 20px 20px 20px;
+}
+header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #333;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 36px;
-      color: #333;
-    }
+/* Top three components */
+.trip-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+  gap: 20px;
+}
 
-    .trip-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      padding: 20px;
-      margin: 0 auto;
-      max-width: 1200px;
-      gap: 20px;
-    }
+.trip-info,
+.trip-cover,
+.trip-map {
+  background: #fff;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 6px;
+}
 
-    .trip-info,
-    .trip-cover,
-    .trip-map {
-      background: #fff;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 6px;
-    }
+.trip-info { flex: 1 1 200px; min-width: 200px; }
+.trip-info p { margin: 5px 0; }
 
-    .trip-info { flex: 1 1 200px; min-width: 200px; }
-    .trip-info p { margin: 5px 0; }
+.trip-cover { flex: 1 1 400px; text-align: center; }
+.trip-cover img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
 
-    .trip-cover { flex: 1 1 400px; text-align: center; }
-    .trip-cover img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto;
-    }
+.trip-map { flex: 1 1 300px; min-width: 300px; height: 300px; }
 
-    .trip-map { flex: 1 1 300px; min-width: 300px; height: 300px; }
+/* WRITEUP */
+.writeup {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 24px 28px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  line-height: 1.7;
+  font-size: 16px;
+  color: #333;
+}
 
-    /* WRITEUP */
-    .writeup {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 24px 28px;
-      background: #fff;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      line-height: 1.7;
-      font-size: 16px;
-      color: #333;
-    }
+/* Banner */
+.banner {
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 15px;
+  text-align: center;
+  background-color: #444;
+  color: #fff;
+  font-size: 18px;
+}
 
-    /* Banner */
-    .banner {
-      margin: 20px auto;
-      max-width: 1200px;
-      padding: 15px;
-      text-align: center;
-      background-color: #444;
-      color: #fff;
-      font-size: 18px;
-    }
+/* Photos */
+.photos-container {
+  margin: 20px auto;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-    /* Photos */
-    .photos-container {
-      margin: 20px auto;
-      max-width: 1200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
+.photos-container img {
+  width: 90%;
+  max-width: 800px;
+  object-fit: cover;
+  display: block;
+}
 
-    .photos-container img {
-      width: 90%;
-      max-width: 800px;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* Mobile */
-    @media (max-width: 900px) {
-      .trip-container {
-        flex-direction: column;
-      }
-    }
-  </style>
+/* Mobile */
+@media (max-width: 900px) {
+  .trip-container {
+    flex-direction: column;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -128,125 +128,91 @@
 <div class="photos-container" id="photos-container"></div>
 
 <script>
-// ---------------------- CONFIG ----------------------
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl0U7PeOyimLk9mx_aU2nKXlxkNif7zF9tGes7-wMy_tOlwoswvUQ17NwaQYFUAlM7/exec"; // <-- Put your Apps Script URL here
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby_5e7cG_REtJkwr6TPDp4oWLoi6H52u3EBswtjLmzvM1UT5bSxDKp3P4SQ5tBoMMYf/exec";
 
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 
-// Helper: convert title → slug
+/* Convert title → slug */
 function makeSlug(text){
   return text.toLowerCase().replace(/\s+/g,"-");
 }
 
-// ---------------------- FIX GOOGLE DRIVE IMAGE LINKS ----------------------
-// Function to convert Google Drive links to the correct format
-function fixGoogleDriveLinks() {
-  const images = document.querySelectorAll('img');
-  
-  images.forEach(image => {
-    const currentSrc = image.src;
-    
-    // Log the current src for debugging
-    console.log('Current Image URL:', currentSrc);
+function initTripGallery(){
 
-    // Check if the link is from Google Drive and in the old format
-    if (currentSrc.includes("drive.google.com/file/d/") && currentSrc.includes("/view?usp=drive_link")) {
-      const fileId = currentSrc.match(/\/d\/(.*)\/view/)[1];
-      const newSrc = `https://drive.google.com/uc?id=${fileId}`;
-      
-      // Log the new src for debugging
-      console.log('Updated Image URL:', newSrc);
+  fetch(SCRIPT_URL)
+  .then(res => res.json())
+  .then(data => {
 
-      // Update the image source
-      image.src = newSrc;
+    const trip = data.cardItems.find(t => makeSlug(t.title) === slug);
 
-      // Check if the new image source is correctly applied
-      image.onload = function() {
-        console.log('Image loaded:', image.src); // Confirm image loaded
-      };
-
-      image.onerror = function() {
-        console.log('Error loading image:', image.src); // Log errors if image fails to load
-      };
+    if(!trip){
+      document.getElementById("trip-title").innerText = "Trip not found";
+      return;
     }
+
+    /* TITLE */
+    document.getElementById("trip-title").innerText = trip.title;
+
+    /* INFO */
+    document.getElementById("trip-info").innerHTML = `
+      <p><strong>Date:</strong> ${trip.date || ""}</p>
+      <p><strong>Area:</strong> ${trip.area || ""}</p>
+      <p><strong>Miles:</strong> ${trip.miles || ""}</p>
+      <p><strong>Elevation Gain:</strong> ${trip.elevationGain || ""}</p>
+      <p><strong>Type:</strong> ${trip.type || ""}</p>
+    `;
+
+    /* COVER PHOTO (IMAGEURL COLUMN) */
+    document.getElementById("trip-cover").innerHTML =
+      `<img src="${trip.imageUrl || ""}" alt="${trip.title}" loading="lazy">`;
+
+    /* MAP */
+    const map = new google.maps.Map(
+      document.getElementById("trip-map"),
+      {
+        center: trip.position,
+        zoom: 10,
+        mapTypeId: "terrain",
+        disableDefaultUI: true
+      }
+    );
+
+    new google.maps.Marker({
+      position: trip.position,
+      map: map
+    });
+
+    /* WRITEUP — FIXED */
+    const writeupText = trip.WriteUp || "";
+    document.getElementById("trip-writeup").innerHTML =
+      writeupText.replace(/\n/g,"<br>");
+
+    /* PHOTOS BELOW BANNER */
+    const urls = data.images[slug] || [];
+
+    document.getElementById("photos-container").innerHTML =
+      urls.map(u =>
+        `<img src="${u}" alt="${trip.title}" loading="lazy">`
+      ).join("");
+
+  })
+  .catch(err=>{
+    console.error(err);
+    document.getElementById("trip-title").innerText =
+      "Failed to load trip data";
   });
 }
 
-// ---------------------- INIT ----------------------
-function initTripGallery() {
-  fetch(SCRIPT_URL)
-    .then(res => res.json())
-    .then(data => {
-      // ------------------- FIND TRIP DATA -------------------
-      const trip = data.cardItems.find(t => makeSlug(t.title) === slug);
-      if(!trip){
-        document.getElementById("trip-title").innerText = "Trip not found";
-        return;
-      }
-
-      // ------------------- TITLE -------------------
-      document.getElementById("trip-title").innerText = trip.title;
-
-      // ------------------- INFO -------------------
-      document.getElementById("trip-info").innerHTML = `
-        <p><strong>Date:</strong> ${trip.date || ""}</p>
-        <p><strong>Area:</strong> ${trip.area || ""}</p>
-        <p><strong>Miles:</strong> ${trip.miles || ""}</p>
-        <p><strong>Elevation Gain:</strong> ${trip.elevationGain || ""}</p>
-        <p><strong>Type:</strong> ${trip.type || ""}</p>
-      `;
-
-      // ------------------- COVER PHOTO -------------------
-      document.getElementById("trip-cover").innerHTML =
-        `<img src="${trip.imageUrl || ""}" alt="${trip.title}" loading="lazy">`;
-
-      // ------------------- GOOGLE MAP -------------------
-      const map = new google.maps.Map(
-        document.getElementById("trip-map"),
-        {
-          center: trip.position || {lat: trip.lat, lng: trip.lng},
-          zoom: 10,
-          mapTypeId: "terrain",
-          disableDefaultUI: true
-        }
-      );
-
-      new google.maps.Marker({
-        position: trip.position || {lat: trip.lat, lng: trip.lng},
-        map: map
-      });
-
-      // ------------------- WRITEUP -------------------
-      const writeupText = trip.WriteUp || "";
-      document.getElementById("trip-writeup").innerHTML =
-        writeupText.replace(/\n/g,"<br>");
-
-      // ------------------- PHOTOS -------------------
-      const urls = data.images[slug] || [];
-      document.getElementById("photos-container").innerHTML =
-        urls.length > 0
-          ? urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("")
-          : "No photos found for this trip.";
-
-      // Fix Google Drive links for photos
-      fixGoogleDriveLinks();
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("trip-title").innerText = "Failed to load trip data";
-    });
-}
-
-// ---------------------- LOAD GOOGLE MAPS ----------------------
-function loadGoogleMaps() {
+/* Load Google Maps */
+function loadGoogleMaps(){
   const s = document.createElement("script");
-  s.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery`;
+  s.src =
+    "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
   s.defer = true;
   document.head.appendChild(s);
 }
 
-// Start
 loadGoogleMaps();
 </script>
 
