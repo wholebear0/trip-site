@@ -102,23 +102,14 @@ body { margin:0; font-family: Arial,sans-serif; background:#f2f2f2; }
 </div>
 
 <script>
-let SCRIPT_URL = "";
-let GOOGLE_MAPS_KEY = "";
+const SCRIPT_URL = "YOUR_APPS_SCRIPT_URL";
 
-// Fetch config.json from GitHub
-fetch("config.json")
-  .then(res => res.json())
-  .then(config => {
-    SCRIPT_URL = config.appsScriptUrl;
-    GOOGLE_MAPS_KEY = config.googleMapsKey;
+const gMapScript = document.createElement("script");
+gMapScript.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_KEY";
+gMapScript.defer = true;
+gMapScript.onload = initMap;
+document.head.appendChild(gMapScript);
 
-    // Dynamically load Google Maps API
-    const gMapScript = document.createElement("script");
-    gMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}`;
-    gMapScript.defer = true;
-    gMapScript.onload = initMap;
-    document.head.appendChild(gMapScript);
-  })
   .catch(err => console.error("Failed to load config.json", err));
 
 function initMap() {
