@@ -95,6 +95,7 @@ function initTripGallery() {
   fetch(SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
+      // Find the trip by slug
       const trip = data.cardItems.find(t => t.title.toLowerCase().replace(/\s+/g,'-') === slug);
       if(!trip){
         document.getElementById("trip-title").innerText = "Trip not found";
@@ -112,10 +113,16 @@ function initTripGallery() {
         <p><strong>Type:</strong> ${trip.type}</p>
       `;
 
-      // Cover photo (first photo in Imagefolder)
+      // All images from Imagefolder
       const imgUrls = data.images[slug] || [];
-      if(imgUrls.length>0){
+      if(imgUrls.length > 0){
+        // First photo for cover
         document.getElementById("trip-cover").innerHTML = `<img src="${imgUrls[0]}" alt="${trip.title}" loading="lazy">`;
+        // Remaining/all photos below banner
+        document.getElementById("photos-container").innerHTML = imgUrls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join('');
+      } else {
+        document.getElementById("trip-cover").innerHTML = '';
+        document.getElementById("photos-container").innerHTML = '<p>No photos available.</p>';
       }
 
       // Map
@@ -130,10 +137,6 @@ function initTripGallery() {
         });
         new google.maps.Marker({ position: { lat: trip.position.lat, lng: trip.position.lng }, map: map });
       }
-
-      // All photos below banner
-      const photosDiv = document.getElementById("photos-container");
-      photosDiv.innerHTML = imgUrls.map(u=>`<img src="${u}" alt="${trip.title}" loading="lazy">`).join('');
     })
     .catch(err => {
       console.error(err);
@@ -141,10 +144,10 @@ function initTripGallery() {
     });
 }
 
-// Load Google Maps script dynamically
-function loadGoogleMaps() {
+// Dynamically load Google Maps script
+function loadGoogleMaps(){
   const script = document.createElement('script');
-  script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery`;
+  script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA&callback=initTripGallery";
   script.defer = true;
   document.head.appendChild(script);
 }
