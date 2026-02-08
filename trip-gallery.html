@@ -95,7 +95,6 @@ fetch('config.json')
   })
   .catch(err => console.error("Failed to load config.json", err));
 
-// Step 2: Initialize after Google Maps API loads
 function initTripGallery() {
   fetch(CONFIG.APPS_SCRIPT_URL)
     .then(res => res.json())
@@ -108,7 +107,7 @@ function initTripGallery() {
 
       document.getElementById("trip-title").innerText = trip.title;
 
-      // Left info column
+      // Trip info column
       document.getElementById("trip-info").innerHTML = `
         <p><strong>Date:</strong> ${trip.date}</p>
         <p><strong>Area:</strong> ${trip.area}</p>
@@ -117,31 +116,36 @@ function initTripGallery() {
         <p><strong>Type:</strong> ${trip.type}</p>
       `;
 
-      // Cover photo (first image)
-      const firstPhoto = trip.Imagefolder ? trip.Imagefolder.split(",")[0].trim() : "";
-      if(firstPhoto) {
-        document.getElementById("trip-cover").innerHTML = `<img src="${firstPhoto}" alt="${trip.title}" loading="lazy">`;
+      // Split all photos
+      let urls = [];
+      if(trip.Imagefolder){
+        urls = trip.Imagefolder.split(",").map(u => u.trim()).filter(u => u.length>0);
       }
 
-      // Small map
-      const mapDiv = document.getElementById("trip-map");
-      const map = new google.maps.Map(mapDiv, {
-        center: { lat: trip.position.lat, lng: trip.position.lng },
-        zoom: 10,
-        mapTypeId: google.maps.MapTypeId.TERRAIN,
-        disableDefaultUI: true,
-        gestureHandling: "greedy"
-      });
-      new google.maps.Marker({
-        position: { lat: trip.position.lat, lng: trip.position.lng },
-        map: map
-      });
+      // Cover photo (first photo)
+      if(urls.length > 0){
+        document.getElementById("trip-cover").innerHTML =
+          `<img src="${urls[0]}" alt="${trip.title}" loading="lazy">`;
+      }
 
       // All photos below banner
-      if(trip.Imagefolder){
-        const urls = trip.Imagefolder.split(",").map(u => u.trim()).filter(u => u.length>0);
-        document.getElementById("photos-container").innerHTML =
-          urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("");
+      const photosDiv = document.getElementById("photos-container");
+      photosDiv.innerHTML = urls.map(u => `<img src="${u}" alt="${trip.title}" loading="lazy">`).join("");
+
+      // Small map
+      if(trip.position){
+        const mapDiv = document.getElementById("trip-map");
+        const map = new google.maps.Map(mapDiv, {
+          center: { lat: trip.position.lat, lng: trip.position.lng },
+          zoom: 10,
+          mapTypeId: google.maps.MapTypeId.TERRAIN,
+          disableDefaultUI: true,
+          gestureHandling: "greedy"
+        });
+        new google.maps.Marker({
+          position: { lat: trip.position.lat, lng: trip.position.lng },
+          map: map
+        });
       }
     })
     .catch(err => {
@@ -150,7 +154,7 @@ function initTripGallery() {
     });
 }
 
-// Step 3: Dynamically load Google Maps API
+// Step 2: Dynamically load Google Maps API
 function loadGoogleMaps(){
   const script = document.createElement('script');
   script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_KEY}&callback=initTripGallery`;
