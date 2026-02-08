@@ -23,7 +23,6 @@
       color: #333;
     }
 
-    /* Top three components */
     .trip-container {
       display: flex;
       flex-wrap: wrap;
@@ -43,20 +42,10 @@
       border-radius: 6px;
     }
 
-    .trip-info {
-      flex: 1 1 200px;
-      min-width: 200px;
-    }
+    .trip-info { flex: 1 1 200px; min-width: 200px; }
+    .trip-info p { margin: 5px 0; }
 
-    .trip-info p {
-      margin: 5px 0;
-    }
-
-    .trip-cover {
-      flex: 1 1 400px;
-      text-align: center;
-    }
-
+    .trip-cover { flex: 1 1 400px; text-align: center; }
     .trip-cover img {
       width: 100%;
       max-height: 300px;
@@ -65,11 +54,7 @@
       margin: 0 auto;
     }
 
-    .trip-map {
-      flex: 1 1 300px;
-      min-width: 300px;
-      height: 300px;
-    }
+    .trip-map { flex: 1 1 300px; min-width: 300px; height: 300px; }
 
     /* WRITEUP */
     .writeup {
@@ -161,14 +146,29 @@ function fixGoogleDriveLinks() {
   
   images.forEach(image => {
     const currentSrc = image.src;
+    
+    // Log the current src for debugging
+    console.log('Current Image URL:', currentSrc);
 
     // Check if the link is from Google Drive and in the old format
     if (currentSrc.includes("drive.google.com/file/d/") && currentSrc.includes("/view?usp=drive_link")) {
       const fileId = currentSrc.match(/\/d\/(.*)\/view/)[1];
       const newSrc = `https://drive.google.com/uc?id=${fileId}`;
       
+      // Log the new src for debugging
+      console.log('Updated Image URL:', newSrc);
+
       // Update the image source
       image.src = newSrc;
+
+      // Check if the new image source is correctly applied
+      image.onload = function() {
+        console.log('Image loaded:', image.src); // Confirm image loaded
+      };
+
+      image.onerror = function() {
+        console.log('Error loading image:', image.src); // Log errors if image fails to load
+      };
     }
   });
 }
