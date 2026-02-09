@@ -197,11 +197,11 @@ function initTripGallery(){
     document.getElementById("trip-writeup").innerHTML =
       writeupText.replace(/\n/g,"<br>");
 
-    // Photos
-    const rawUrls = data.images[slug] || [];
+    // Photos (backslash-separated)
+    const rawString = (data.images[slug] || []).join(""); // join in case it's array
+    const rawUrls = rawString.split(/\\\s*/).map(s => s.trim()).filter(Boolean);
+
     const galleryHTML = rawUrls.map(item => {
-      if(!item) return "";
-      item = item.trim();
       const parts = item.split('|');
       const url = parts[0] || "";
       const caption = parts[1] || "";
