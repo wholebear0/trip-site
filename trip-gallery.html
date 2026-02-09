@@ -198,15 +198,29 @@ function initTripGallery(){
       writeupText.replace(/\n/g,"<br>");
 
     // Photos (backslash-separated)
-    const rawString = (data.images[slug] || []).join(""); // join in case it's array
+    const rawString = (data.images[slug] || []).join(""); // join if array
     const rawUrls = rawString.split(/\\\s*/).map(s => s.trim()).filter(Boolean);
 
     const galleryHTML = rawUrls.map(item => {
-      const parts = item.split('|');
-      const url = parts[0] || "";
-      // everything after the first | is treated as caption
-      const caption = parts.slice(1).join('|') || "";
+      if(!item) return "";
+
+      // Split at first | only
+      const firstPipe = item.indexOf('|');
+      let url = "";
+      let caption = "";
+
+      if(firstPipe === -1){
+        url = item;
+        caption = "";
+      } else {
+        url = item.slice(0, firstPipe).trim();
+        caption = item.slice(firstPipe + 1).trim();
+        // Remove trailing | only if it's the last character
+        if(caption.endsWith('|')) caption = caption.slice(0, -1).trim();
+      }
+
       if(!url) return "";
+
       let figure = `<figure><img src="${url}" alt="${caption || trip.title}" loading="lazy">`;
       if(caption) figure += `<figcaption>${caption}</figcaption>`;
       figure += `</figure>`;
