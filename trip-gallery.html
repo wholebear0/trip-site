@@ -45,7 +45,12 @@ header h1 {
 .trip-info { flex: 1 1 200px; min-width: 200px; }
 .trip-info p { margin: 5px 0; }
 
-.trip-cover { flex: 1 1 400px; text-align: center; }
+/* Remove padding around the top middle photo */
+.trip-cover {
+  flex: 1 1 400px;
+  text-align: center;
+  padding: 0;
+}
 .trip-cover img {
   width: 100%;
   max-height: 300px;
@@ -69,7 +74,7 @@ header h1 {
   color: #333;
 }
 
-/* Banner */
+/* Banner 
 .banner {
   margin: 20px auto;
   max-width: 1200px;
@@ -78,7 +83,7 @@ header h1 {
   background-color: #444;
   color: #fff;
   font-size: 18px;
-}
+} */
 
 /* Photos */
 .photos-container {
@@ -91,8 +96,8 @@ header h1 {
 }
 
 .photos-container img {
-  width: 90%;
-  max-width: 1000px;
+  width: 100%;
+  max-width: 1200px;
   object-fit: cover;
   display: block;
 }
