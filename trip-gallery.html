@@ -142,7 +142,7 @@ header h1 {
 <div class="photos-container" id="photos-container"></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3dwxVyzavcZdRys0HpmEQmWTG-Mvs74alj2m_mM1MCG2xK-BUjTm-EEthF2tghAJ0/exec";
+const SCRIPT_URL = "";
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
 
@@ -239,7 +239,7 @@ function initTripGallery(){
 
 function loadGoogleMaps(){
   const s = document.createElement("script");
-  s.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyCMCxxUBxZ-a2UyHwu5PbKwYBxvAo0bAAA";
+  s.src = "https://maps.googleapis.com/maps/api/js?key=";
   s.defer = true;
   s.onload = initTripGallery;
   document.head.appendChild(s);
